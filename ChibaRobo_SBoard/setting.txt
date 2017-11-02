@@ -1,0 +1,2 @@
+1, launch console
+1, show the current mode
