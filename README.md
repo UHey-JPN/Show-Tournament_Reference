@@ -158,6 +158,13 @@ keyword: ちばロボ、千葉ロボ、ちばろぼ、トーナメントシス�
 	http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 * Processing開発環境の入手
+	Processingの開発環境を設定する。必要なライブラリは「Minim、udp」となります。
+	* udpライブラリ  
+	https://ubaa.net/shared/processing/udp/index.htm  
+	ダウンロードしたファイルを展開して「ドキュメント＞Processing＞Libraries」にコピー。
+
+	* Minimは「メニュー＞スケッチ＞ライブラリをインポート＞ライブラリを追加」で「Minim」を検索。
+	
 
 
 各プログラムを実行する。ファイアーウォールの警告が出た場合、許可してください。
