@@ -1,0 +1,4 @@
+loud_volume=100
+quiet_volume=50
+silent_volume=30
+home_volume=50
