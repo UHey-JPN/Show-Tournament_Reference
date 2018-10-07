@@ -1,4 +1,3 @@
-
 UdpSocket udp;
 
 LightData d_home;
@@ -22,11 +21,12 @@ LightObjectManager lom;
 
 void setup(){
   size(1024,700);
-
-  udp = new UdpSocket();
   
   lom = new LightObjectManager();
   sm = new SettingManager(lom);
+
+    Executor ex = Executors.newCachedThreadPool();
+  udp = new UdpSocket(ex);
   
   light_soc = new LightSocket(58240, lom);
 

@@ -1,5 +1,5 @@
 import java.io.FileNotFoundException;
-
+import java.util.concurrent.Executors;
 
 
 UdpSocket udp;
@@ -40,7 +40,8 @@ void setup(){
   // settings
   s = new SettingLoader(500, 280, 100, 50);
 
-  udp = new UdpSocket();
+  Executor ex = Executors.newCachedThreadPool();
+  udp = new UdpSocket(ex);
   
   // normal list
   normal = new MusicPlayer("sound_list/normal_music", minim);
