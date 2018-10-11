@@ -1,17 +1,23 @@
 import hypermedia.net.*;
-import java.util.Calendar;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 
-public class UdpSocket {
-  UDP udp;
-  
+public class UdpSocket implements Runnable {
+  public static final int PORT_NUM = 58239;
+  public static final int BUF_SIZE = 2048;
   private volatile boolean port_get = false;
   private int kam_port = -1;
   private String server_ip = "";
@@ -19,19 +25,26 @@ public class UdpSocket {
   private String show_mode = "home";
   private Calendar start_time = Calendar.getInstance();
   private int[] point_list = {0,0};
- 
+  private DatagramSocket soc;
+
+
   UdpSocket(){
-    udp = new UDP(this, 58239);
-  
-    if(udp.isClosed() == true) {
+    // open socket
+    try {
+      soc = new DatagramSocket(null);
+      soc.setReuseAddress(true);
+      soc.bind(new InetSocketAddress(PORT_NUM));
+     println("Open UDP Port(" + soc.getLocalPort() + ")");
+    } catch (SocketException e) {
+      e.printStackTrace();
       JFrame f = new JFrame();
-      JLabel label = new JLabel("UDP Port 58239 is already used.");
+      JLabel label = new JLabel("Could not open UDP port 58239. (is another process using it?)");
       JOptionPane.showMessageDialog(f, label);
       System.exit(1);
     }
-      
-    udp.listen(true);
 
+    ExecutorService ex = Executors.newCachedThreadPool();
+    ex.execute(this);
   }
   
   public String get_show_mode(){
@@ -114,7 +127,7 @@ public class UdpSocket {
       
       // send keep alive
       if( port_get == true ){
-        udp.send(id + ",Score Board", server_ip, kam_port);
+        // udp.send(id + ",Score Board", server_ip, kam_port);
       }
       
     }else{
@@ -124,9 +137,26 @@ public class UdpSocket {
       
     }
   }
+
+  public void run(){
+    while(true){
+      byte[] buf = new byte[BUF_SIZE];
+      DatagramPacket pac = new DatagramPacket(buf, buf.length);
+      
+      //----------------------------------------
+      // UDPソケットへのデータ到着待ち
+      try {
+        soc.receive(pac);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      this.receive(buf);
+    }
+  }
   
   public void close(){
-    udp.close();
+    soc.close();
   }
 
 
